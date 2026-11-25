@@ -33,7 +33,7 @@ follows the milestone plan in `PLAN.md`.
   simulation plots, board canvas, DRC panel, Gerber preview and downloads.
 - Launcher: random/fixed port, browser auto-open, batch export and example
   generation.
-- Tests: 263 Rust test cases, 500 reference netlists, 40 analytic circuits, 20
+- Tests: 269 Rust test cases, 500 reference netlists, 40 analytic circuits, 20
   zero-DRC boards, deterministic replay, Gerber round trips, 1,000 malformed
   inputs, HTTP/SSE end-to-end, Playwright browser flow.
 - Deterministic fuzz harness and measured standard-library benchmarks.

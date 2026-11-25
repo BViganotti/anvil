@@ -68,7 +68,7 @@ cargo run --release -- generate-examples
 
 | Suite | What it proves |
 |---|---|
-| `cargo test` | 263 unit and integration test cases across all crates |
+| `cargo test` | 269 unit and integration test cases across all crates |
 | 500 reference netlists | linear MNA matches an independent solver |
 | 40 analytic circuits | dividers, Millman, parallel, diodes, RC within 0.1% |
 | 20 generated boards | every net routes with zero DRC errors |
