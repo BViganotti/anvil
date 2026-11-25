@@ -147,7 +147,8 @@ canvas { flex: 1; width: 100%; height: 100%; display: block; cursor: crosshair; 
 .legend .swatch { width: 14px; height: 3px; border-radius: 2px; }
 
 .violations { display: flex; flex-direction: column; gap: 4px; max-height: 240px; overflow-y: auto; }
-.violation { border-left: 3px solid var(--bad); padding: 5px 7px; background: #170f11; font-size: 11px; line-height: 1.35; border-radius: 2px; }
+.violation { border-left: 3px solid var(--bad); padding: 5px 7px; background: #170f11; font-size: 11px; line-height: 1.35; border-radius: 2px; cursor: pointer; }
+.violation:hover { background: #23151a; }
 .violation.warning { border-left-color: var(--warn); background: #1b170d; }
 .violation b { font-family: var(--mono); font-weight: 500; color: #ffb3ad; }
 .violation.warning b { color: #f2cc60; }

@@ -530,10 +530,21 @@ function renderDrcSummary() {
     <div class="kv"><span>Unrouted</span><span>${d.unrouted}</span></div>
     <div class="kv"><span>Details</span><span>${(d.violations || []).length}${d.truncated ? '+' : ''}</span></div>`;
   let html = '';
-  for (const v of (d.violations || []).slice(0, 60)) {
-    html += `<div class="violation ${v.severity === 'warning' ? 'warning' : ''}"><b>${esc(v.kind)}</b> ${esc(v.layer || '')} · ${esc(v.message)}</div>`;
+  for (const [idx, v] of (d.violations || []).slice(0, 60).entries()) {
+    html += `<div class="violation ${v.severity === 'warning' ? 'warning' : ''}" data-vx="${v.at[0]}" data-vy="${v.at[1]}" title="Click to centre this violation"><b>${esc(v.kind)}</b> ${esc(v.layer || '')} · ${esc(v.message)}</div>`;
+    void idx;
   }
   list.innerHTML = html;
+  for (const row of list.querySelectorAll('[data-vx]')) {
+    row.addEventListener('click', () => {
+      const x = Number(row.dataset.vx), y = Number(row.dataset.vy);
+      if (!Number.isFinite(x) || !Number.isFinite(y)) return;
+      S.bd.cx = x; S.bd.cy = y;
+      S.bd.scale = Math.min(0.002, Math.max(S.bd.scale * 2, 0.00002));
+      S.bd.fitted = true;
+      drawBoard();
+    });
+  }
   setStatus('drc-status', d.clean ? 'DRC clean' : `DRC ${d.errors}`, d.clean ? 'ok' : 'bad');
   if (S.board) S.board.drc = d;
 }
