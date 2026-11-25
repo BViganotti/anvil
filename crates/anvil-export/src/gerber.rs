@@ -598,6 +598,7 @@ fn parse_word(
                 return Err(GerberError::TooManyOps);
             }
             doc.primitives.push(GerberPrimitive::Draw { aperture: ap, from, to: target });
+            *cur = Some(target);
             *ops += 1;
         }
         Some(2) => {
@@ -606,6 +607,7 @@ fn parse_word(
         Some(3) => {
             let ap = aperture.ok_or(GerberError::MissingAperture)?;
             doc.primitives.push(GerberPrimitive::Flash { aperture: ap, at: target });
+            *cur = Some(target);
             *ops += 1;
         }
         Some(_) => {}
