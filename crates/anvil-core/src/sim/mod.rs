@@ -1352,6 +1352,234 @@ mod tests {
     }
 
     #[test]
+    fn dff_samples_on_rising_edge() {
+        let mut c = Circuit::new();
+        let d = c.add_node("d");
+        let clk = c.add_node("clk");
+        let q = c.add_node("q");
+        let qn = c.add_node("qn");
+        c.vsource(d, 0, 5.0);
+        c.elements.push(Element::VSource {
+            a: clk,
+            b: 0,
+            wave: Waveform::Pulse {
+                v1: 0.0,
+                v2: 5.0,
+                delay: 1e-6,
+                rise: 1e-9,
+                width: 2e-6,
+                period: 4e-6,
+            },
+        });
+        c.add(Element::Digital(Digital {
+            gate: GateKind::Dff,
+            inputs: vec![d, clk],
+            outputs: vec![q, qn],
+            delay: 1e-8,
+            vdd: 5.0,
+            rout: 100.0,
+            initial: false,
+        }));
+        let mut opts = SimOptions::default();
+        opts.tstep = 5e-8;
+        opts.tstop = 3e-6;
+        opts.method = Integration::Trapezoidal;
+        let tr = transient(&c, &opts).unwrap();
+        assert!(tr.last("q").unwrap() > 4.5, "q={:?}", tr.last("q"));
+        assert!(tr.last("qn").unwrap() < 0.5, "qn={:?}", tr.last("qn"));
+        // Before the edge Q stays low.
+        let qs = tr.series_for("q").unwrap();
+        let early = tr
+            .times
+            .iter()
+            .position(|&t| t >= 0.9e-6)
+            .map(|i| qs[i])
+            .unwrap_or(0.0);
+        assert!(early < 0.5, "early q={early}");
+    }
+
+    #[test]
+    fn logic_gate_transient_follows_inputs() {
+        let mut c = Circuit::new();
+        let a = c.add_node("a");
+        let b = c.add_node("b");
+        let y = c.add_node("y");
+        c.elements.push(Element::VSource {
+            a,
+            b: 0,
+            wave: Waveform::Pulse {
+                v1: 0.0,
+                v2: 5.0,
+                delay: 0.0,
+                rise: 1e-9,
+                width: 2e-6,
+                period: 10e-6,
+            },
+        });
+        c.elements.push(Element::VSource {
+            a: b,
+            b: 0,
+            wave: Waveform::Pulse {
+                v1: 0.0,
+                v2: 5.0,
+                delay: 1e-6,
+                rise: 1e-9,
+                width: 1e-6,
+                period: 10e-6,
+            },
+        });
+        c.add(Element::Digital(Digital {
+            gate: GateKind::And,
+            inputs: vec![a, b],
+            outputs: vec![y],
+            delay: 1e-8,
+            vdd: 5.0,
+            rout: 100.0,
+            initial: false,
+        }));
+        let mut opts = SimOptions::default();
+        opts.tstep = 2e-8;
+        opts.tstop = 3e-6;
+        let tr = transient(&c, &opts).unwrap();
+        let at = |t: f64| {
+            let idx = tr.times.iter().position(|&x| x >= t).unwrap_or(tr.times.len() - 1);
+            tr.series_for("y").unwrap()[idx]
+        };
+        assert!(at(1.5e-6) > 4.0, "y at 1.5us = {}", at(1.5e-6));
+        assert!(at(2.5e-6) < 1.0, "y at 2.5us = {}", at(2.5e-6));
+        assert!(at(0.5e-6) < 1.0, "y at 0.5us = {}", at(0.5e-6));
+    }
+
+    #[test]
+    fn rl_transient_matches_analytic() {
+        let mut c = Circuit::new();
+        let inp = c.add_node("in");
+        let mid = c.add_node("mid");
+        c.elements.push(Element::VSource {
+            a: inp,
+            b: 0,
+            wave: Waveform::Pulse {
+                v1: 0.0,
+                v2: 5.0,
+                delay: 0.0,
+                rise: 1e-9,
+                width: 1.0,
+                period: 2.0,
+            },
+        });
+        let r = 100.0;
+        let l = 1e-3;
+        let tau = l / r;
+        c.resistor(inp, mid, r);
+        c.inductor(mid, 0, l);
+        let mut opts = SimOptions::default();
+        opts.tstep = tau / 4000.0;
+        opts.tstop = 4.0 * tau;
+        opts.method = Integration::Trapezoidal;
+        let tr = transient(&c, &opts).unwrap();
+        let s = tr.series_for("mid").unwrap();
+        for (i, &t) in tr.times.iter().enumerate() {
+            if t < 1e-8 {
+                continue;
+            }
+            let want = 5.0 * (-t / tau).exp();
+            assert!((s[i] - want).abs() < 0.002 * 5.0, "t={t} got={} want={want}", s[i]);
+        }
+        assert!(tr.last("mid").unwrap() < 0.1);
+    }
+
+    #[test]
+    fn switch_open_and_closed() {
+        for (closed, want) in [(false, 5.0), (true, 0.0)] {
+            let mut c = Circuit::new();
+            let n = c.add_node("n");
+            let mid = c.add_node("mid");
+            c.vsource(n, 0, 5.0);
+            c.resistor(n, mid, 1000.0);
+            c.elements.push(Element::Switch {
+                a: mid,
+                b: 0,
+                ron: 0.01,
+                roff: 1e9,
+                closed,
+            });
+            let v = dc_op(&c).unwrap().voltages[mid];
+            assert!((v - want).abs() < 0.01, "closed={closed} v={v}");
+        }
+    }
+
+    #[test]
+    fn diode_reverse_blocks() {
+        let mut c = Circuit::new();
+        let a = c.add_node("a");
+        let mid = c.add_node("mid");
+        c.vsource(a, 0, -5.0);
+        c.resistor(a, mid, 1000.0);
+        c.add(Element::Diode { a: mid, k: 0, is: 2.2e-9, n: 1.8, rs: 0.0 });
+        let r = dc_op(&c).unwrap();
+        assert!((r.voltages[mid] + 5.0).abs() < 1e-3, "v={}", r.voltages[mid]);
+    }
+
+    #[test]
+    fn backward_euler_rc_is_within_budget() {
+        let mut c = Circuit::new();
+        let inp = c.add_node("in");
+        let out = c.add_node("out");
+        c.elements.push(Element::VSource {
+            a: inp,
+            b: 0,
+            wave: Waveform::Pulse {
+                v1: 0.0,
+                v2: 5.0,
+                delay: 0.0,
+                rise: 1e-9,
+                width: 1.0,
+                period: 2.0,
+            },
+        });
+        let tau = 1000.0 * 1e-6;
+        c.resistor(inp, out, 1000.0);
+        c.capacitor(out, 0, 1e-6);
+        let mut opts = SimOptions::default();
+        opts.tstep = tau / 4000.0;
+        opts.tstop = 3.0 * tau;
+        opts.method = Integration::BackwardEuler;
+        let tr = transient(&c, &opts).unwrap();
+        let s = tr.series_for("out").unwrap();
+        for (i, &t) in tr.times.iter().enumerate() {
+            let want = 5.0 * (1.0 - (-t / tau).exp());
+            assert!((s[i] - want).abs() < 0.005, "t={t} got={} want={want}", s[i]);
+        }
+    }
+
+    #[test]
+    fn waveforms_evaluate_correctly() {
+        let pulse = Waveform::Pulse {
+            v1: 0.0,
+            v2: 5.0,
+            delay: 1.0,
+            rise: 0.0,
+            width: 0.5,
+            period: 2.0,
+        };
+        assert_eq!(pulse.value(0.0), 0.0);
+        assert_eq!(pulse.value(1.2), 5.0);
+        assert_eq!(pulse.value(2.2), 0.0);
+        let sin = Waveform::Sin {
+            offset: 1.0,
+            amp: 2.0,
+            freq: 1.0,
+            delay: 0.0,
+            phase: 90.0,
+        };
+        assert!((sin.value(0.0) - 3.0).abs() < 1e-9);
+        let pwl = Waveform::Pwl(vec![(0.0, 0.0), (1.0, 10.0)]);
+        assert!((pwl.value(0.5) - 5.0).abs() < 1e-9);
+        assert_eq!(pwl.value(-1.0), 0.0);
+        assert_eq!(pwl.value(9.0), 10.0);
+    }
+
+    #[test]
     fn logic_and_truth_table() {
         for (a, b, want) in [(false, false, false), (true, false, false), (true, true, true)] {
             let mut c = Circuit::new();
