@@ -331,6 +331,16 @@ impl Project {
         out.push(rlc(lib)?);
         out.push(logic(lib)?);
         out.push(rectifier(lib)?);
+        out.push(ladder(lib)?);
+        out.push(current_bias(lib)?);
+        out.push(parallel_rc(lib)?);
+        out.push(diode_clamp(lib)?);
+        out.push(half_adder(lib)?);
+        out.push(dff_divider(lib)?);
+        out.push(led_series(lib)?);
+        out.push(inductor_filter(lib)?);
+        out.push(differentiator(lib)?);
+        out.push(clamp_cap(lib)?);
         Ok(out)
     }
 }
@@ -677,6 +687,293 @@ fn rectifier(lib: &Library) -> Result<Project, String> {
             ("C1", "1", "VP"),
             ("C1", "2", "GND"),
             ("GND1", "1", "GND"),
+        ],
+    )?;
+    Ok(p)
+}
+
+
+fn ladder(lib: &Library) -> Result<Project, String> {
+    let mut p = Project::new("Resistor ladder");
+    p.schematic.sheet.title = "Three-stage attenuator".to_string();
+    add(&mut p, lib, "V", "V1", 15.0, 30.0)?;
+    add(&mut p, lib, "R", "R1", 32.0, 36.0)?;
+    add(&mut p, lib, "R", "R2", 48.0, 36.0)?;
+    add(&mut p, lib, "R", "R3", 64.0, 36.0)?;
+    p.schematic.set_value(comp_id(&p, "V1").unwrap(), "10").map_err(|e| e.to_string())?;
+    for (r, v) in [("R1", "1k"), ("R2", "1k"), ("R3", "2k")] {
+        p.schematic.set_value(comp_id(&p, r).unwrap(), v).map_err(|e| e.to_string())?;
+    }
+    label_pins(
+        &mut p,
+        &[
+            ("V1", "+", "VIN"),
+            ("V1", "-", "GND"),
+            ("R1", "1", "VIN"),
+            ("R1", "2", "A"),
+            ("R2", "1", "A"),
+            ("R2", "2", "B"),
+            ("R3", "1", "B"),
+            ("R3", "2", "GND"),
+        ],
+    )?;
+    Ok(p)
+}
+
+fn current_bias(lib: &Library) -> Result<Project, String> {
+    let mut p = Project::new("Current bias");
+    p.schematic.sheet.title = "Current source bias".to_string();
+    add(&mut p, lib, "I", "I1", 15.0, 34.0)?;
+    add(&mut p, lib, "R", "R1", 35.0, 38.0)?;
+    add(&mut p, lib, "R", "R2", 35.0, 28.0)?;
+    p.schematic.set_value(comp_id(&p, "I1").unwrap(), "1m").map_err(|e| e.to_string())?;
+    p.schematic.set_value(comp_id(&p, "R1").unwrap(), "1k").map_err(|e| e.to_string())?;
+    p.schematic.set_value(comp_id(&p, "R2").unwrap(), "2k").map_err(|e| e.to_string())?;
+    label_pins(
+        &mut p,
+        &[
+            ("I1", "+", "BIAS"),
+            ("I1", "-", "GND"),
+            ("R1", "1", "BIAS"),
+            ("R1", "2", "GND"),
+            ("R2", "1", "BIAS"),
+            ("R2", "2", "GND"),
+        ],
+    )?;
+    Ok(p)
+}
+
+fn parallel_rc(lib: &Library) -> Result<Project, String> {
+    let mut p = Project::new("Parallel RC");
+    p.schematic.sheet.title = "Parallel RC step".to_string();
+    add(&mut p, lib, "V", "V1", 15.0, 30.0)?;
+    add(&mut p, lib, "R", "R1", 32.0, 36.0)?;
+    add(&mut p, lib, "R", "R2", 32.0, 26.0)?;
+    add(&mut p, lib, "C", "C1", 50.0, 31.0)?;
+    let v = comp_id(&p, "V1").unwrap();
+    p.schematic.set_property(v, "wave", "pulse").map_err(|e| e.to_string())?;
+    for (k, val) in [("v1", "0"), ("v2", "5"), ("rise", "1u"), ("width", "2m"), ("period", "4m")] {
+        p.schematic.set_property(v, k, val).map_err(|e| e.to_string())?;
+    }
+    p.schematic.set_value(comp_id(&p, "R1").unwrap(), "1k").map_err(|e| e.to_string())?;
+    p.schematic.set_value(comp_id(&p, "R2").unwrap(), "2k").map_err(|e| e.to_string())?;
+    p.schematic.set_value(comp_id(&p, "C1").unwrap(), "220n").map_err(|e| e.to_string())?;
+    label_pins(
+        &mut p,
+        &[
+            ("V1", "+", "IN"),
+            ("V1", "-", "GND"),
+            ("R1", "1", "IN"),
+            ("R1", "2", "OUT"),
+            ("R2", "1", "IN"),
+            ("R2", "2", "OUT"),
+            ("C1", "1", "OUT"),
+            ("C1", "2", "GND"),
+        ],
+    )?;
+    Ok(p)
+}
+
+fn diode_clamp(lib: &Library) -> Result<Project, String> {
+    let mut p = Project::new("Diode clamp");
+    p.schematic.sheet.title = "Positive diode clamp".to_string();
+    add(&mut p, lib, "V", "V1", 15.0, 30.0)?;
+    add(&mut p, lib, "V", "V2", 55.0, 20.0)?;
+    add(&mut p, lib, "R", "R1", 30.0, 35.0)?;
+    add(&mut p, lib, "R", "R2", 45.0, 25.0)?;
+    add(&mut p, lib, "D", "D1", 55.0, 32.0)?;
+    let v = comp_id(&p, "V1").unwrap();
+    p.schematic.set_property(v, "wave", "sin").map_err(|e| e.to_string())?;
+    for (k, val) in [("amp", "8"), ("freq", "1k"), ("offset", "0")] {
+        p.schematic.set_property(v, k, val).map_err(|e| e.to_string())?;
+    }
+    p.schematic.set_value(comp_id(&p, "V2").unwrap(), "3").map_err(|e| e.to_string())?;
+    label_pins(
+        &mut p,
+        &[
+            ("V1", "+", "IN"),
+            ("V1", "-", "GND"),
+            ("V2", "+", "CLAMP"),
+            ("V2", "-", "GND"),
+            ("R1", "1", "IN"),
+            ("R1", "2", "OUT"),
+            ("R2", "1", "OUT"),
+            ("R2", "2", "GND"),
+            ("D1", "A", "OUT"),
+            ("D1", "K", "CLAMP"),
+        ],
+    )?;
+    Ok(p)
+}
+
+fn half_adder(lib: &Library) -> Result<Project, String> {
+    let mut p = Project::new("Half adder");
+    p.schematic.sheet.title = "XOR/AND half adder".to_string();
+    add(&mut p, lib, "V", "V1", 15.0, 36.0)?;
+    add(&mut p, lib, "V", "V2", 15.0, 22.0)?;
+    add(&mut p, lib, "XOR2", "U1", 42.0, 34.0)?;
+    add(&mut p, lib, "AND2", "U2", 42.0, 20.0)?;
+    for (refdes, period) in [("V1", "1m"), ("V2", "600u")] {
+        let v = comp_id(&p, refdes).unwrap();
+        p.schematic.set_property(v, "wave", "pulse").map_err(|e| e.to_string())?;
+        for (k, val) in [("v1", "0"), ("v2", "5"), ("rise", "10n"), ("width", "300u"), ("period", period)] {
+            p.schematic.set_property(v, k, val).map_err(|e| e.to_string())?;
+        }
+    }
+    label_pins(
+        &mut p,
+        &[
+            ("V1", "+", "A"),
+            ("V1", "-", "GND"),
+            ("V2", "+", "B"),
+            ("V2", "-", "GND"),
+            ("U1", "A", "A"),
+            ("U1", "B", "B"),
+            ("U1", "Y", "SUM"),
+            ("U2", "A", "A"),
+            ("U2", "B", "B"),
+            ("U2", "Y", "CARRY"),
+        ],
+    )?;
+    Ok(p)
+}
+
+fn dff_divider(lib: &Library) -> Result<Project, String> {
+    let mut p = Project::new("DFF divider");
+    p.schematic.sheet.title = "Divide-by-two flip-flop".to_string();
+    add(&mut p, lib, "V", "V1", 15.0, 30.0)?;
+    add(&mut p, lib, "DFF", "U1", 45.0, 30.0)?;
+    let v = comp_id(&p, "V1").unwrap();
+    p.schematic.set_property(v, "wave", "pulse").map_err(|e| e.to_string())?;
+    for (k, val) in [("v1", "0"), ("v2", "5"), ("rise", "10n"), ("width", "400u"), ("period", "1m")] {
+        p.schematic.set_property(v, k, val).map_err(|e| e.to_string())?;
+    }
+    label_pins(
+        &mut p,
+        &[
+            ("V1", "+", "CLK"),
+            ("V1", "-", "GND"),
+            ("U1", "D", "QB"),
+            ("U1", "CLK", "CLK"),
+            ("U1", "Q", "Q"),
+            ("U1", "QN", "QB"),
+        ],
+    )?;
+    Ok(p)
+}
+
+fn led_series(lib: &Library) -> Result<Project, String> {
+    let mut p = Project::new("LED series");
+    p.schematic.sheet.title = "Two LEDs in series".to_string();
+    add(&mut p, lib, "V", "V1", 15.0, 30.0)?;
+    add(&mut p, lib, "R", "R1", 32.0, 35.0)?;
+    add(&mut p, lib, "LED", "D1", 48.0, 30.0)?;
+    add(&mut p, lib, "LED", "D2", 63.0, 25.0)?;
+    p.schematic.set_value(comp_id(&p, "V1").unwrap(), "9").map_err(|e| e.to_string())?;
+    p.schematic.set_value(comp_id(&p, "R1").unwrap(), "330").map_err(|e| e.to_string())?;
+    label_pins(
+        &mut p,
+        &[
+            ("V1", "+", "VIN"),
+            ("V1", "-", "GND"),
+            ("R1", "1", "VIN"),
+            ("R1", "2", "N1"),
+            ("D1", "A", "N1"),
+            ("D1", "K", "N2"),
+            ("D2", "A", "N2"),
+            ("D2", "K", "GND"),
+        ],
+    )?;
+    Ok(p)
+}
+
+fn inductor_filter(lib: &Library) -> Result<Project, String> {
+    let mut p = Project::new("Inductor filter");
+    p.schematic.sheet.title = "RLC low-pass".to_string();
+    add(&mut p, lib, "V", "V1", 15.0, 30.0)?;
+    add(&mut p, lib, "R", "R1", 30.0, 35.0)?;
+    add(&mut p, lib, "L", "L1", 45.0, 30.0)?;
+    add(&mut p, lib, "C", "C1", 60.0, 24.0)?;
+    add(&mut p, lib, "R", "R2", 60.0, 34.0)?;
+    let v = comp_id(&p, "V1").unwrap();
+    p.schematic.set_property(v, "wave", "pulse").map_err(|e| e.to_string())?;
+    for (k, val) in [("v1", "0"), ("v2", "5"), ("rise", "100n"), ("width", "2m"), ("period", "4m")] {
+        p.schematic.set_property(v, k, val).map_err(|e| e.to_string())?;
+    }
+    p.schematic.set_value(comp_id(&p, "R1").unwrap(), "100").map_err(|e| e.to_string())?;
+    p.schematic.set_value(comp_id(&p, "L1").unwrap(), "2m").map_err(|e| e.to_string())?;
+    p.schematic.set_value(comp_id(&p, "C1").unwrap(), "1u").map_err(|e| e.to_string())?;
+    p.schematic.set_value(comp_id(&p, "R2").unwrap(), "1k").map_err(|e| e.to_string())?;
+    label_pins(
+        &mut p,
+        &[
+            ("V1", "+", "IN"),
+            ("V1", "-", "GND"),
+            ("R1", "1", "IN"),
+            ("R1", "2", "N1"),
+            ("L1", "1", "N1"),
+            ("L1", "2", "OUT"),
+            ("C1", "1", "OUT"),
+            ("C1", "2", "GND"),
+            ("R2", "1", "OUT"),
+            ("R2", "2", "GND"),
+        ],
+    )?;
+    Ok(p)
+}
+
+fn differentiator(lib: &Library) -> Result<Project, String> {
+    let mut p = Project::new("RC differentiator");
+    p.schematic.sheet.title = "RC differentiator".to_string();
+    add(&mut p, lib, "V", "V1", 15.0, 30.0)?;
+    add(&mut p, lib, "C", "C1", 33.0, 34.0)?;
+    add(&mut p, lib, "R", "R1", 48.0, 28.0)?;
+    let v = comp_id(&p, "V1").unwrap();
+    p.schematic.set_property(v, "wave", "pulse").map_err(|e| e.to_string())?;
+    for (k, val) in [("v1", "0"), ("v2", "5"), ("rise", "1u"), ("width", "1m"), ("period", "2m")] {
+        p.schematic.set_property(v, k, val).map_err(|e| e.to_string())?;
+    }
+    p.schematic.set_value(comp_id(&p, "C1").unwrap(), "100n").map_err(|e| e.to_string())?;
+    p.schematic.set_value(comp_id(&p, "R1").unwrap(), "10k").map_err(|e| e.to_string())?;
+    label_pins(
+        &mut p,
+        &[
+            ("V1", "+", "IN"),
+            ("V1", "-", "GND"),
+            ("C1", "1", "IN"),
+            ("C1", "2", "OUT"),
+            ("R1", "1", "OUT"),
+            ("R1", "2", "GND"),
+        ],
+    )?;
+    Ok(p)
+}
+
+fn clamp_cap(lib: &Library) -> Result<Project, String> {
+    let mut p = Project::new("Diode peak detector");
+    p.schematic.sheet.title = "Diode and capacitor peak detector".to_string();
+    add(&mut p, lib, "V", "V1", 15.0, 30.0)?;
+    add(&mut p, lib, "D", "D1", 33.0, 35.0)?;
+    add(&mut p, lib, "C", "C1", 50.0, 26.0)?;
+    add(&mut p, lib, "R", "R1", 65.0, 31.0)?;
+    let v = comp_id(&p, "V1").unwrap();
+    p.schematic.set_property(v, "wave", "pulse").map_err(|e| e.to_string())?;
+    for (k, val) in [("v1", "0"), ("v2", "5"), ("rise", "1u"), ("width", "1m"), ("period", "2m")] {
+        p.schematic.set_property(v, k, val).map_err(|e| e.to_string())?;
+    }
+    p.schematic.set_value(comp_id(&p, "C1").unwrap(), "1u").map_err(|e| e.to_string())?;
+    p.schematic.set_value(comp_id(&p, "R1").unwrap(), "100k").map_err(|e| e.to_string())?;
+    label_pins(
+        &mut p,
+        &[
+            ("V1", "+", "IN"),
+            ("V1", "-", "GND"),
+            ("D1", "A", "IN"),
+            ("D1", "K", "PEAK"),
+            ("C1", "1", "PEAK"),
+            ("C1", "2", "GND"),
+            ("R1", "1", "PEAK"),
+            ("R1", "2", "GND"),
         ],
     )?;
     Ok(p)
