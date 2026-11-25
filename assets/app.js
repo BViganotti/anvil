@@ -561,6 +561,9 @@ function routeSnapshot(job) {
   $('route-log').textContent = text;
   const r = job.report;
   if (r) {
+    $('route-log').textContent =
+      `${r.nets_routed}/${r.nets_total} nets · ${r.edges_routed}/${r.edges_total} edges · ` +
+      `${r.attempts} attempt(s) · ${r.ripups} rip-up(s) · ${r.drc.errors} DRC`;
     setStatus('route-status', r.clean ? 'routed clean' : `route ${r.drc.errors} DRC`, r.clean ? 'ok' : 'bad');
   } else if (job.running) {
     setStatus('route-status', 'routing…', 'warn');
@@ -782,11 +785,16 @@ function bindBoard() {
     pan = { x: e.clientX - rect.left, y: e.clientY - rect.top, panX: S.bd.panX, panY: S.bd.panY };
   });
   canvas.addEventListener('mousemove', (e) => {
-    if (!pan) return;
     const rect = canvas.getBoundingClientRect();
-    S.bd.panX = pan.panX + (e.clientX - rect.left - pan.x);
-    S.bd.panY = pan.panY + (e.clientY - rect.top - pan.y);
-    scheduleDraw();
+    const { w, h } = canvasSize(canvas);
+    const world = bdWorld(e.clientX - rect.left, e.clientY - rect.top, w, h);
+    if (pan) {
+      S.bd.panX = pan.panX + (e.clientX - rect.left - pan.x);
+      S.bd.panY = pan.panY + (e.clientY - rect.top - pan.y);
+      scheduleDraw();
+    }
+    const hud = $('board-hud');
+    if (hud) hud.textContent = `${(world[0] / NM).toFixed(2)}, ${(world[1] / NM).toFixed(2)} mm · ${(S.bd.scale * NM).toFixed(1)} px/mm`;
   });
   window.addEventListener('mouseup', () => { pan = null; });
   canvas.addEventListener('wheel', (e) => {
