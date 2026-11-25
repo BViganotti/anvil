@@ -25,6 +25,11 @@ them through the **Examples…** selector; the headless API can load them with
 | `inductor-filter.json` | Inductor filter | RLC low-pass response |
 | `rc-differentiator.json` | RC differentiator | capacitive edge response |
 | `diode-peak-detector.json` | Diode peak detector | diode and capacitor hold the peak |
+| `rl-step.json` | RL step | series inductor current step |
+| `switch-divider.json` | Switch divider | ideal switch changes the divider |
+| `three-source-superposition.json` | Three-source node | Millman/superposition with three sources |
+| `rc-decay.json` | RC decay | capacitor initial-condition discharge |
+| `parallel-inductors.json` | Parallel inductors | coupled load transient with two inductors |
 
 Regenerate the files after changing the project builders:
 
