@@ -1,0 +1,11 @@
+[package]
+name = "anvil-studio"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "Embedded local HTTP/SSE Studio for Anvil"
+
+[dependencies]
+anvil-core = { path = "../anvil-core" }
+anvil-pcb = { path = "../anvil-pcb" }
+anvil-export = { path = "../anvil-export" }

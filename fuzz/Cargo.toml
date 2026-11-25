@@ -1,0 +1,15 @@
+[package]
+name = "anvil-fuzz"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish = false
+
+[[bin]]
+name = "anvil-fuzz"
+path = "src/main.rs"
+
+[dependencies]
+anvil-core = { path = "../crates/anvil-core" }
+anvil-pcb = { path = "../crates/anvil-pcb" }
+anvil-export = { path = "../crates/anvil-export" }

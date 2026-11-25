@@ -1,0 +1,35 @@
+[workspace]
+members = [
+    "crates/anvil-core",
+    "crates/anvil-pcb",
+    "crates/anvil-export",
+    "crates/anvil-studio",
+    "bench",
+    "fuzz",
+]
+resolver = "2"
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+rust-version = "1.75"
+authors = ["Anvil contributors"]
+
+[package]
+name = "anvil"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+description = "Anvil — a local browser EDA workbench (schematic, simulation, PCB, DRC, autoroute, Gerber)"
+
+[[bin]]
+name = "anvil"
+path = "src/main.rs"
+
+[dependencies]
+anvil-core = { path = "crates/anvil-core" }
+anvil-pcb = { path = "crates/anvil-pcb" }
+anvil-export = { path = "crates/anvil-export" }
+anvil-studio = { path = "crates/anvil-studio" }

@@ -4,3 +4,5 @@
 *.pdb
 .DS_Store
 *.swp
+/node_modules/
+/examples/out/

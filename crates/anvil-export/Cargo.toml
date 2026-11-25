@@ -1,0 +1,10 @@
+[package]
+name = "anvil-export"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "Gerber, Excellon and raster export for Anvil"
+
+[dependencies]
+anvil-core = { path = "../anvil-core" }
+anvil-pcb = { path = "../anvil-pcb" }

@@ -1,0 +1,9 @@
+[package]
+name = "anvil-pcb"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "PCB model, DRC and autorouter for Anvil"
+
+[dependencies]
+anvil-core = { path = "../anvil-core" }
