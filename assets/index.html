@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Anvil — local EDA workbench</title>
+<link rel="stylesheet" href="/app.css">
+</head>
+<body>
+<header id="topbar">
+  <div class="brand"><span class="logo">A</span><span>Anvil</span><span class="tag">EDA workbench</span></div>
+  <div class="project"><span id="project-name">Loading…</span><span id="sheet-title" class="muted"></span></div>
+  <div class="statusline"><span id="net-status" class="pill">netlist</span><span id="drc-status" class="pill">DRC</span><span id="route-status" class="pill">route</span></div>
+</header>
+<nav id="tabs">
+  <button class="tab active" data-tab="schematic" id="tab-schematic">Schematic</button>
+  <button class="tab" data-tab="simulate" id="tab-simulate">Simulate</button>
+  <button class="tab" data-tab="board" id="tab-board">Board</button>
+  <button class="tab" data-tab="export" id="tab-export">Export</button>
+</nav>
+<main>
+  <section class="view active" id="view-schematic">
+    <aside class="sidebar">
+      <h2>Library</h2>
+      <input id="part-search" placeholder="Search parts" autocomplete="off">
+      <div id="part-list" class="part-list"></div>
+      <h2>Selection</h2>
+      <div id="selection" class="panel-body muted">Nothing selected</div>
+      <div class="row">
+        <button id="rotate-sel" title="Rotate selection">Rotate 90°</button>
+        <button id="mirror-sel" title="Mirror selection">Mirror</button>
+        <button id="delete-sel" class="danger" title="Delete selection">Delete</button>
+      </div>
+    </aside>
+    <div class="canvas-wrap">
+      <div class="toolbar">
+        <button id="tool-select" class="tool active">Select</button>
+        <button id="tool-wire" class="tool">Wire</button>
+        <button id="tool-label" class="tool">Label</button>
+        <span class="sep"></span>
+        <button id="load-demo">Load demo</button>
+        <button id="new-project">New</button>
+        <span class="sep"></span>
+        <button id="zoom-in">Zoom +</button>
+        <button id="zoom-out">Zoom −</button>
+        <button id="zoom-fit">Fit</button>
+        <span class="hint">Drag to move · Double-click to place · Wheel to zoom</span>
+      </div>
+      <canvas id="schematic-canvas"></canvas>
+      <div id="schematic-hud" class="hud"></div>
+    </div>
+  </section>
+
+  <section class="view" id="view-simulate">
+    <aside class="sidebar">
+      <h2>Analysis</h2>
+      <div class="field"><label for="sim-mode">Mode</label>
+        <select id="sim-mode"><option value="tran">Transient</option><option value="dc">DC operating point</option></select>
+      </div>
+      <div class="field"><label for="sim-tstep">Max time step (µs)</label><input id="sim-tstep" type="number" value="1" min="0.001" max="100000" step="0.001"></div>
+      <div class="field"><label for="sim-tstop">Stop time (ms)</label><input id="sim-tstop" type="number" value="3" min="0.001" max="200" step="0.1"></div>
+      <div class="field"><label for="sim-method">Integrator</label>
+        <select id="sim-method"><option value="trap">Trapezoidal</option><option value="be">Backward Euler</option></select>
+      </div>
+      <button id="simulate-run" class="primary">Run simulation</button>
+      <div id="sim-status" class="panel-body muted">No run yet</div>
+      <h2>Netlist</h2>
+      <div id="netlist-panel" class="panel-body"></div>
+    </aside>
+    <div class="canvas-wrap">
+      <div class="toolbar"><span id="sim-headline" class="hint">Transient analysis · node voltages</span></div>
+      <canvas id="plot-canvas"></canvas>
+      <div id="legend" class="legend"></div>
+    </div>
+  </section>
+
+  <section class="view" id="view-board">
+    <aside class="sidebar">
+      <h2>Board</h2>
+      <div class="row"><button id="generate-board" class="primary">Generate from schematic</button></div>
+      <div class="row"><button id="run-drc">Run DRC</button><button id="autoroute" class="primary">Autoroute</button></div>
+      <div class="row"><button id="clear-routes">Clear routes</button><button id="board-fit">Fit</button></div>
+      <h2>DRC</h2>
+      <div id="drc-summary" class="panel-body muted">No board</div>
+      <div id="drc-list" class="violations"></div>
+      <h2>Autoroute</h2>
+      <div id="route-progress-wrap" class="progress-wrap"><div id="route-progress" class="progress"></div></div>
+      <div id="route-log" class="panel-body muted">Idle</div>
+      <h2>Ratsnest</h2>
+      <div id="ratsnest-info" class="panel-body muted"></div>
+    </aside>
+    <div class="canvas-wrap">
+      <div class="toolbar">
+        <span class="hint">Layers: </span>
+        <label class="check"><input type="checkbox" id="show-top" checked> Top</label>
+        <label class="check"><input type="checkbox" id="show-bottom" checked> Bottom</label>
+        <label class="check"><input type="checkbox" id="show-rats" checked> Ratsnest</label>
+        <span class="sep"></span><span id="board-hud" class="hint"></span>
+      </div>
+      <canvas id="board-canvas"></canvas>
+    </div>
+  </section>
+
+  <section class="view" id="view-export">
+    <aside class="sidebar">
+      <h2>Export</h2>
+      <div class="row"><button id="preview-top" class="primary">Top copper preview</button><button id="preview-bottom">Bottom</button></div>
+      <div id="export-status" class="panel-body muted">Generate a board first</div>
+      <h2>Gerber / drill</h2>
+      <div class="row wrap" id="downloads">
+        <button data-export="gerber-top">Top .gbr</button>
+        <button data-export="gerber-bottom">Bottom .gbr</button>
+        <button data-export="gerber-outline">Outline .gbr</button>
+        <button data-export="gerber-silk">Silk .gbr</button>
+        <button data-export="drill">Drill .drl</button>
+      </div>
+      <h2>Manifest</h2>
+      <div id="manifest" class="panel-body muted">—</div>
+    </aside>
+    <div class="canvas-wrap">
+      <div class="toolbar"><span class="hint">Gerber rasterized by the built-in parser/rasterizer</span></div>
+      <div class="preview-wrap"><img id="preview" alt="Gerber preview"><div id="preview-empty" class="empty">No preview yet</div></div>
+    </div>
+  </section>
+</main>
+<div id="toast" class="toast"></div>
+<script src="/app.js"></script>
+</body>
+</html>

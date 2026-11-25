@@ -142,16 +142,41 @@ fn drilled_holes(board: &Board) -> Vec<(Point, i64)> {
         .collect()
 }
 
+fn preview_doc(board: &Board, layer: Layer) -> Result<gerber::GerberDoc, ExportError> {
+    let text = gerber::write_copper(board, layer);
+    let mut doc = gerber::parse(&text).map_err(|e| ExportError::Gerber(e.to_string()))?;
+    // Include the board outline so the preview shows the physical board, not
+    // just the bounding box of the copper features on this layer.
+    if board.outline.len() >= 2 {
+        let code = doc
+            .apertures
+            .iter()
+            .map(|a| a.code)
+            .max()
+            .unwrap_or(9)
+            .saturating_add(1);
+        doc.apertures.push(gerber::Aperture {
+            code,
+            shape: gerber::ApertureShape::Circle,
+            width: 200_000,
+            height: 200_000,
+        });
+        for i in 0..board.outline.len() {
+            let a = board.outline[i];
+            let b = board.outline[(i + 1) % board.outline.len()];
+            doc.primitives
+                .push(gerber::GerberPrimitive::Draw { aperture: code, from: a, to: b });
+        }
+    }
+    Ok(doc)
+}
+
 /// Render a PNG preview of top copper with real drilled holes punched out.
 pub fn preview_png(board: &Board, target_width: u32) -> Result<Vec<u8>, ExportError> {
     if board.pad_count() == 0 && board.traces.is_empty() && board.vias.is_empty() {
         return Err(ExportError::Empty);
     }
-    let text = gerber::write_copper(board, Layer::Top);
-    let doc = gerber::parse(&text).map_err(|e| ExportError::Gerber(e.to_string()))?;
-    if doc.primitives.is_empty() {
-        return Err(ExportError::Empty);
-    }
+    let doc = preview_doc(board, Layer::Top)?;
     let opts = raster::fit_to_width(&doc, target_width)
         .ok_or_else(|| ExportError::Raster("cannot fit preview".to_string()))?;
     let img = raster::render_with_holes(&doc, &drilled_holes(board), &opts)
@@ -161,9 +186,11 @@ pub fn preview_png(board: &Board, target_width: u32) -> Result<Vec<u8>, ExportEr
 
 /// Render bottom copper as PNG.
 pub fn preview_bottom_png(board: &Board, target_width: u32) -> Result<Vec<u8>, ExportError> {
-    let text = gerber::write_copper(board, Layer::Bottom);
-    let doc = gerber::parse(&text).map_err(|e| ExportError::Gerber(e.to_string()))?;
-    if doc.primitives.is_empty() {
+    let doc = preview_doc(board, Layer::Bottom)?;
+    let has_copper = doc.primitives.iter().any(|p| {
+        matches!(p, gerber::GerberPrimitive::Flash { .. } | gerber::GerberPrimitive::Draw { .. })
+    });
+    if !has_copper {
         return Err(ExportError::Empty);
     }
     let opts = raster::fit_to_width(&doc, target_width)
@@ -242,8 +269,8 @@ mod tests {
         let b = routed_board();
         let png = preview_png(&b, 600).unwrap();
         assert_eq!(&png[..8], &[0x89, b'P', b'N', b'G', 0x0d, 0x0a, 0x1a, 0x0a]);
-        // Bottom has no copper on this board, so the preview reports Empty.
-        assert_eq!(preview_bottom_png(&b, 600), Err(ExportError::Empty));
+        let bottom = preview_bottom_png(&b, 600).unwrap();
+        assert_eq!(&bottom[..8], &[0x89, b'P', b'N', b'G', 0x0d, 0x0a, 0x1a, 0x0a]);
     }
 
     #[test]

@@ -116,7 +116,6 @@ struct Canvas {
     scale: f64,
     min: Point,
     margin: f64,
-    invert: bool,
 }
 
 impl Canvas {
@@ -152,7 +151,6 @@ impl Canvas {
             scale,
             min: Point::new(bounds.min.x, bounds.min.y),
             margin: margin as f64,
-            invert,
         })
     }
 

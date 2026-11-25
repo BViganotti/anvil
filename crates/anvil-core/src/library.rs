@@ -510,8 +510,8 @@ impl Library {
             courtyard: (3_000_000, 3_400_000),
         });
         for (name, symbol, fp, value, cat, desc) in [
-            ("V", "V", "TP_1MM", "5", "source", "DC voltage source"),
-            ("I", "I", "TP_1MM", "1m", "source", "DC current source"),
+            ("V", "V", "PINHDR_2", "5", "source", "DC voltage source"),
+            ("I", "I", "PINHDR_2", "1m", "source", "DC current source"),
             ("GND", "GND", "TP_1MM", "GND", "power", "Ground symbol"),
             ("VCC", "VCC", "TP_1MM", "VCC", "power", "Supply symbol"),
             ("SW", "SW", "SOT23_SW", "SW", "switch", "Ideal switch"),

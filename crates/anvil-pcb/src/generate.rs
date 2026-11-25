@@ -21,7 +21,7 @@ pub struct BuildOptions {
 impl Default for BuildOptions {
     fn default() -> Self {
         BuildOptions {
-            board_width: 100 * MM,
+            board_width: 70 * MM,
             margin: 6 * MM,
             gap: 5 * MM,
             copper_layers: 2,
@@ -72,6 +72,10 @@ pub fn board_from_netlist(
     }
     let mut placements: Vec<Placement> = Vec::new();
     for (ci, c) in sch.components().iter().enumerate() {
+        // Power symbols are schematic annotations, not board components.
+        if matches!(c.symbol.as_str(), "GND" | "VCC") {
+            continue;
+        }
         let def = lib
             .footprint(&c.footprint)
             .cloned()
@@ -108,7 +112,7 @@ pub fn board_from_netlist(
         x += p.width + opts.gap;
         row_h = row_h.max(p.height);
     }
-    let height = (y + row_h + opts.margin).max(40 * MM);
+    let height = (y + row_h + opts.margin).max(28 * MM);
     board.outline = vec![
         Point::new(0, 0),
         Point::new(opts.board_width, 0),
@@ -241,8 +245,8 @@ mod tests {
             .unwrap();
         let nl = extract(&s, &lib);
         let b = board_from_netlist(&s, &nl, &lib, &BuildOptions::default()).unwrap();
-        assert_eq!(b.footprints.len(), 3);
-        assert_eq!(b.pad_count(), 5);
+        assert_eq!(b.footprints.len(), 2);
+        assert_eq!(b.pad_count(), 4);
         assert!(b.nets.iter().any(|n| n == "GND"));
     }
 }
