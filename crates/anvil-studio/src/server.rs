@@ -112,6 +112,11 @@ fn static_response(path: &str) -> Option<Response> {
             "text/javascript; charset=utf-8",
             assets::JS.as_bytes().to_vec(),
         )),
+        "/favicon.svg" => Some(Response::new(
+            200,
+            "image/svg+xml",
+            assets::FAVICON.as_bytes().to_vec(),
+        )),
         "/favicon.ico" => Some(Response::empty(204)),
         _ => None,
     }
