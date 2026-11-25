@@ -32,6 +32,7 @@ const S = {
   pan: null,
   plot: null,
   routeES: null,
+  hiddenSeries: new Set(),
   noticeTimer: 0,
 };
 
@@ -835,12 +836,16 @@ function drawPlot() {
   const times = p.time_ms || [];
   if (!times.length) return;
   let vmin = Infinity, vmax = -Infinity;
-  for (const s of p.series || []) for (const v of s.values) { if (v < vmin) vmin = v; if (v > vmax) vmax = v; }
+  for (const [si, s] of (p.series || []).entries()) {
+    if (S.hiddenSeries.has(si)) continue;
+    for (const v of s.values) { if (v < vmin) vmin = v; if (v > vmax) vmax = v; }
+  }
   if (!isFinite(vmin)) { vmin = 0; vmax = 1; }
   if (vmax - vmin < 1e-9) { vmax += 1; vmin -= 1; }
   const tmax = times[times.length - 1] || 1;
   drawGrid(ctx, padL, padT, iw, ih, vmin, vmax, tmax, 'time (ms)');
   (p.series || []).forEach((s, si) => {
+    if (S.hiddenSeries.has(si)) return;
     ctx.strokeStyle = s.color || COLORS[si % COLORS.length];
     ctx.lineWidth = 1.6;
     ctx.beginPath();
@@ -884,7 +889,15 @@ function renderLegend(p) {
       `<div class="item"><span class="swatch" style="background:${COLORS[i % COLORS.length]}"></span>${esc(n.name)} ${n.voltage.toFixed(4)} V</div>`).join('');
   } else {
     $('legend').innerHTML = (p.series || []).map((s, i) =>
-      `<div class="item"><span class="swatch" style="background:${s.color || COLORS[i % COLORS.length]}"></span>${esc(s.name)}</div>`).join('');
+      `<div class="item ${S.hiddenSeries.has(i) ? 'hidden' : ''}" data-series="${i}" title="Click to toggle"><span class="swatch" style="background:${s.color || COLORS[i % COLORS.length]}"></span>${esc(s.name)}</div>`).join('');
+    for (const item of $('legend').querySelectorAll('[data-series]')) {
+      item.addEventListener('click', () => {
+        const idx = Number(item.dataset.series);
+        if (S.hiddenSeries.has(idx)) S.hiddenSeries.delete(idx); else S.hiddenSeries.add(idx);
+        renderLegend(S.plot);
+        drawPlot();
+      });
+    }
   }
 }
 
@@ -902,6 +915,7 @@ async function runSimulation() {
     }
     const res = await apiJson('/api/simulate', body);
     S.plot = res;
+    S.hiddenSeries = new Set();
     drawPlot();
     renderLegend(res);
     const info = res.mode === 'dc'
