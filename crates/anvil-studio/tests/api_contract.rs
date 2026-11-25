@@ -46,6 +46,9 @@ fn state_and_library_endpoints() {
     let l = api::dispatch(&st, &req("GET", "/api/library", ""));
     assert_eq!(l.status, 200);
     assert!(json_body(&l).get("parts").unwrap().as_array().unwrap().len() >= 20);
+    let p = api::dispatch(&st, &req("GET", "/api/project/json", ""));
+    assert_eq!(p.status, 200);
+    assert_eq!(json_body(&p).get("format").unwrap().as_str(), Some("anvil-project-1"));
 }
 
 #[test]

@@ -1388,6 +1388,10 @@ fn get_api(st: &Arc<Mutex<StudioState>>, req: &Request) -> ApiResult {
                 None => Err(ApiError::not_found("board is not generated")),
             }
         }
+        "/api/project/json" => {
+            let st = lock(st);
+            Ok(Response::json(&st.project.to_json()))
+        }
         "/api/netlist" => {
             let st = lock(st);
             let nl = st.project.netlist(&st.lib);
