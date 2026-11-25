@@ -1118,6 +1118,16 @@ function bindUI() {
   $('example-select').addEventListener('change', (e) => {
     loadExample(e.target.value).finally(() => { e.target.value = ''; });
   });
+  $('download-project').addEventListener('click', async () => {
+    try {
+      const res = await api('/api/project/json');
+      const text = await res.text();
+      const name = (S.state && S.state.name ? S.state.name : 'project')
+        .toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'project';
+      downloadBlob(name + '.json', text, 'application/json');
+      notify('project downloaded');
+    } catch (e) { notify(e.message, true); }
+  });
   $('new-project').addEventListener('click', async () => {
     try {
       const st = await apiJson('/api/project/reset', {});
