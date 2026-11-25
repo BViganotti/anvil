@@ -1152,10 +1152,32 @@ function bindUI() {
   for (const b of document.querySelectorAll('[data-export]')) b.addEventListener('click', () => downloadFile(b.dataset.export));
   window.addEventListener('resize', () => scheduleDraw());
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') { S.wireStart = null; S.pendingPart = null; renderParts($('part-search').value); setTool('select'); }
-    if ((e.key === 'Delete' || e.key === 'Backspace') && S.sel && document.activeElement.tagName !== 'INPUT') {
-      $('delete-sel').click();
+    const typing = ['INPUT', 'SELECT', 'TEXTAREA'].includes(document.activeElement.tagName);
+    if (e.key === 'Escape') {
+      S.wireStart = null;
+      S.pendingPart = null;
+      renderParts($('part-search').value);
+      setTool('select');
     }
+    if (typing) return;
+    if (e.key === '?' || (e.key === '/' && e.shiftKey)) {
+      notify('1–4 tabs · F fit · W wire · L label · R rotate · M mirror · Del delete · wheel zoom', false);
+    }
+    if (e.key === 'Delete' || e.key === 'Backspace') {
+      if (S.sel) $('delete-sel').click();
+    }
+    if (e.key >= '1' && e.key <= '4') {
+      const tabs = ['schematic', 'simulate', 'board', 'export'];
+      setTab(tabs[Number(e.key) - 1]);
+    }
+    if (S.tab === 'schematic') {
+      if (e.key === 'f' || e.key === 'F') { fitView('sch'); drawSchematic(); }
+      if (e.key === 'w' || e.key === 'W') setTool('wire');
+      if (e.key === 'l' || e.key === 'L') setTool('label');
+      if (e.key === 'r' || e.key === 'R') $('rotate-sel').click();
+      if (e.key === 'm' || e.key === 'M') $('mirror-sel').click();
+    }
+    if (S.tab === 'board' && (e.key === 'f' || e.key === 'F')) { S.bd.fitted = false; fitView('bd'); drawBoard(); }
   });
 }
 
