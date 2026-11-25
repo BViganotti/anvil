@@ -1,0 +1,546 @@
+info: cargo-llvm-cov currently setting cfg(coverage); you can opt-out it by passing --no-cfg-coverage
+   Compiling anvil-core v0.1.0 (/Users/bviga/orca/projects/anvil/crates/anvil-core)
+   Compiling anvil-pcb v0.1.0 (/Users/bviga/orca/projects/anvil/crates/anvil-pcb)
+   Compiling anvil-export v0.1.0 (/Users/bviga/orca/projects/anvil/crates/anvil-export)
+   Compiling anvil-studio v0.1.0 (/Users/bviga/orca/projects/anvil/crates/anvil-studio)
+   Compiling anvil v0.1.0 (/Users/bviga/orca/projects/anvil)
+   Compiling anvil-fuzz v0.1.0 (/Users/bviga/orca/projects/anvil/fuzz)
+   Compiling anvil-bench v0.1.0 (/Users/bviga/orca/projects/anvil/bench)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 6.72s
+     Running unittests src/main.rs (target/llvm-cov-target/debug/deps/anvil-7658945c7cb0c1e4)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/acceptance.rs (target/llvm-cov-target/debug/deps/acceptance-f6fa0eb4af3b93e4)
+
+running 8 tests
+test truncated_valid_files_are_rejected_without_panic ... ok
+test netlist_extraction_is_deterministic_and_exact ... ok
+test five_hundred_netlists_match_reference_solver ... ok
+test one_thousand_malformed_inputs_fail_cleanly ... ok
+test forty_analytic_circuits_within_tolerance ... ok
+test autoroute_is_reproducible_for_a_seed ... ok
+test routes_survive_export_round_trip ... ok
+test twenty_generated_boards_route_with_zero_drc ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.46s
+
+     Running tests/api_fuzz.rs (target/llvm-cov-target/debug/deps/api_fuzz-aee9d21b40ebd57f)
+
+running 1 test
+test server_survives_malformed_requests ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.11s
+
+     Running tests/cli_export.rs (target/llvm-cov-target/debug/deps/cli_export-3945ad25de953206)
+
+running 3 tests
+test version_and_help ... ok
+test export_writes_parseable_clean_files ... ok
+test unknown_option_fails_with_status_two ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.56s
+
+     Running tests/examples_load.rs (target/llvm-cov-target/debug/deps/examples_load-2c5e5282596932c7)
+
+running 3 tests
+test examples_directory_has_only_expected_projects ... ok
+test routed_gerber_examples_parse ... ok
+test example_files_match_the_builders ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/regressions.rs (target/llvm-cov-target/debug/deps/regressions-cb649233c6e4fd6b)
+
+running 4 tests
+test gerber_current_point_advances_after_draw_and_flash ... ok
+test json_rejects_leading_zero_numbers ... ok
+test examples_match_the_public_builders ... ok
+test raster_fit_does_not_exceed_target_width ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/studio_http.rs (target/llvm-cov-target/debug/deps/studio_http-39c6b6f2a26d80e5)
+
+running 3 tests
+test studio_route_sse_streams_progress ... ok
+test studio_rejects_oversized_and_malformed_requests ... ok
+test studio_full_flow_over_http ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.47s
+
+     Running unittests src/main.rs (target/llvm-cov-target/debug/deps/anvil_bench-dfadd1d2582fa7ad)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/llvm-cov-target/debug/deps/anvil_core-16f8ba534517f57a)
+
+running 38 tests
+test geom::tests::rotation_quarter_turns ... ok
+test geom::tests::rectangle_distance ... ok
+test geom::tests::polygon_tests ... ok
+test geom::tests::segment_distance ... ok
+test geom::tests::point_distance ... ok
+test library::tests::footprints_have_pads ... ok
+test library::tests::library_is_consistent ... ok
+test netlist::tests::bus_labels_resolve ... ok
+test library::tests::search_works ... ok
+test library::tests::symbols_have_unique_pin_names ... ok
+test netlist::tests::crossing_wires_do_not_connect_without_junction ... ok
+test netlist::tests::ground_symbols_join ... ok
+test netlist::tests::limits_are_enforced ... ok
+test netlist::tests::labels_connect_by_name ... ok
+test schematic::tests::empty_schematic_has_bounds ... ok
+test schematic::tests::pin_rotation_is_exact ... ok
+test sim::lu::tests::pivots_when_needed ... ok
+test netlist::tests::voltage_divider_nets ... ok
+test sim::lu::tests::rejects_non_finite ... ok
+test sim::lu::tests::singular_matrix_errors ... ok
+test sim::lu::tests::solves_three_by_three ... ok
+test sim::lu::tests::solves_two_by_two ... ok
+test sim::tests::current_source_direction ... ok
+test sim::tests::diode_rectifier_forward ... ok
+test sim::tests::dff_samples_on_rising_edge ... ok
+test sim::tests::diode_reverse_blocks ... ok
+test sim::tests::logic_and_truth_table ... ok
+test sim::tests::parallel_resistors ... ok
+test sim::tests::switch_open_and_closed ... ok
+test sim::tests::voltage_divider ... ok
+test sim::tests::waveforms_evaluate_correctly ... ok
+test util::tests::engineering_values ... ok
+test util::tests::rng_is_reproducible ... ok
+test util::tests::formatting ... ok
+test sim::tests::logic_gate_transient_follows_inputs ... ok
+test sim::tests::backward_euler_rc_is_within_budget ... ok
+test sim::tests::rc_charge_matches_analytic ... ok
+test sim::tests::rl_transient_matches_analytic ... ok
+
+test result: ok. 38 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.22s
+
+     Running tests/compile_contract.rs (target/llvm-cov-target/debug/deps/compile_contract-a2ed745d22e113c6)
+
+running 7 tests
+test two_ground_nets_are_rejected ... ok
+test unsupported_symbol_is_reported ... ok
+test pulse_properties_compile ... ok
+test connectors_are_connective_only ... ok
+test compiles_divider ... ok
+test missing_ground_is_an_error ... ok
+test bad_value_is_reported_with_refdes ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/geom_edges.rs (target/llvm-cov-target/debug/deps/geom_edges-6550fcfada0ec1b7)
+
+running 5 tests
+test collinear_overlap_and_touching ... ok
+test coordinate_limit ... ok
+test degenerate_segments_and_points ... ok
+test rectangles_union_and_expand ... ok
+test polygon_edges_and_area ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/library_contract.rs (target/llvm-cov-target/debug/deps/library_contract-a94efed3cacaff89)
+
+running 5 tests
+test every_part_resolves_symbol_and_footprint ... ok
+test footprints_have_sane_pads ... ok
+test known_parts_exist ... ok
+test search_matches_categories_and_keywords ... ok
+test symbols_have_unique_pin_numbers_and_names ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/netlist_rules.rs (target/llvm-cov-target/debug/deps/netlist_rules-e47fd5ebb5131b4f)
+
+running 6 tests
+test undefined_bus_label_reports_error ... ok
+test bus_index_out_of_range_reports_error ... ok
+test unknown_symbols_and_single_pins_warn ... ok
+test t_junction_needs_a_junction_dot ... ok
+test global_and_power_labels_merge_by_name ... ok
+test conflicting_labels_report_error_and_stay_deterministic ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/schematic_edit.rs (target/llvm-cov-target/debug/deps/schematic_edit-13c3ad2c1599affc)
+
+running 5 tests
+test refdes_is_automatic_and_unique ... ok
+test labels_and_buses_validate ... ok
+test wire_edits_clean_duplicates ... ok
+test move_rotate_mirror_recompute_pins ... ok
+test find_pin_and_component_hits ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/sim_dc.rs (target/llvm-cov-target/debug/deps/sim_dc-d995bfcca3e725bd)
+
+running 9 tests
+test bad_node_is_rejected ... ok
+test capacitor_is_open_at_dc ... ok
+test floating_node_is_solved_to_zero ... ok
+test multiple_sources_and_superposition ... ok
+test voltage_source_branch_current ... ok
+test zero_resistance_is_rejected ... ok
+test inductor_is_a_short_at_dc ... ok
+test switch_state_is_applied ... ok
+test large_but_valid_circuit ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/sim_digital.rs (target/llvm-cov-target/debug/deps/sim_digital-8bdd112078f01253)
+
+running 4 tests
+test digital_validation_rejects_bad_shapes ... ok
+test gate_truth_tables ... ok
+test gate_delay_changes_edge_time ... ok
+test dff_outputs_are_complementary ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/sim_limits.rs (target/llvm-cov-target/debug/deps/sim_limits-5cd6d13b20dc1ee9)
+
+running 7 tests
+test step_limit_option_is_validated ... ok
+test element_limit_is_enforced ... ok
+test digital_shape_limits ... ok
+test non_finite_and_zero_values_are_rejected ... ok
+test oversized_pwl_is_rejected ... ok
+test too_many_record_nodes_is_rejected ... ok
+test node_limit_is_enforced ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/sim_transient.rs (target/llvm-cov-target/debug/deps/sim_transient-6c185ceae78c767a)
+
+running 7 tests
+test invalid_time_options_are_rejected ... ok
+test no_reactive_elements_equals_dc ... ok
+test pulse_source_zero_width_stays_low ... ok
+test record_nodes_selects_series ... ok
+test step_budget_truncates_instead_of_hanging ... ok
+test pwl_source_drives_rc ... ok
+test capacitor_initial_condition_discharges ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/util_limits.rs (target/llvm-cov-target/debug/deps/util_limits-f693e2a5ddc50cfe)
+
+running 5 tests
+test limits_are_positive_and_ordered ... ok
+test integer_parsing_is_bounded ... ok
+test engineering_suffixes ... ok
+test formatting_and_snap ... ok
+test rng_ranges_and_shuffle ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/llvm-cov-target/debug/deps/anvil_export-54718fe12223b99b)
+
+running 18 tests
+test png::tests::crc_known_value ... ok
+test png::tests::encodes_valid_png ... ok
+test drill::tests::malformed_drill_fails_cleanly ... ok
+test gerber::tests::aperture_and_flash ... ok
+test png::tests::rejects_bad_sizes ... ok
+test gerber::tests::malformed_input_fails_cleanly ... ok
+test raster::tests::drilled_holes_are_white ... ok
+test raster::tests::empty_document_errors ... ok
+test drill::tests::drill_round_trip ... ok
+test tests::empty_board_preview_errors ... ok
+test gerber::tests::copper_round_trips ... ok
+test gerber::tests::outline_round_trips ... ok
+test raster::tests::render_is_deterministic ... ok
+test raster::tests::raster_has_copper ... ok
+test tests::exports_round_trip ... ok
+test raster::tests::png_encoding_works ... ok
+test tests::gerber_reparse_rasterizes_identically ... ok
+test tests::preview_is_png ... ok
+
+test result: ok. 18 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+     Running tests/drill_contract.rs (target/llvm-cov-target/debug/deps/drill_contract-0c7126101e1252ae)
+
+running 6 tests
+test no_tools_is_an_error ... ok
+test header_comments_and_unknown_lines ... ok
+test fixed_format_integers_are_rejected ... ok
+test imperial_decimal_is_supported ... ok
+test duplicate_tools_and_unknown_hits_error ... ok
+test writer_groups_diameters_and_round_trips ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/gerber_contract.rs (target/llvm-cov-target/debug/deps/gerber_contract-a69620e5177cf25d)
+
+running 7 tests
+test inch_coordinates_are_converted ... ok
+test omitted_coordinates_are_retained ... ok
+test unsupported_features_are_explicit_errors ... ok
+test aperture_shapes ... ok
+test header_only_layer_is_valid ... ok
+test writer_flashes_match_pad_positions ... ok
+test four_layer_board_writes_inner_files ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/png_contract.rs (target/llvm-cov-target/debug/deps/png_contract-6b05f3d5476bf269)
+
+running 3 tests
+test size_mismatches_are_rejected ... ok
+test one_pixel_image_is_valid ... ok
+test large_images_use_multiple_stored_blocks ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/raster_contract.rs (target/llvm-cov-target/debug/deps/raster_contract-57d68f0467fa4cce)
+
+running 6 tests
+test empty_and_malformed_documents ... ok
+test bad_options_are_rejected ... ok
+test invert_swaps_foreground_and_background ... ok
+test holes_reduce_dark_pixels ... ok
+test render_is_deterministic_and_png_works ... ok
+test fit_to_width_respects_margin ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running unittests src/main.rs (target/llvm-cov-target/debug/deps/anvil_fuzz-9dc39688ca30ee75)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/llvm-cov-target/debug/deps/anvil_pcb-f79074bfcb0337ed)
+
+running 16 tests
+test board::tests::trace_validation ... ok
+test connect::tests::ratsnest_connects_two_pads ... ok
+test connect::tests::routed_trace_removes_ratsnest ... ok
+test board::tests::board_outline_and_nets ... ok
+test drc::tests::clearance_violation_detected ... ok
+test drc::tests::routed_board_clean ... ok
+test drc::tests::unrouted_reported ... ok
+test board::tests::footprint_pads_are_placed ... ok
+test geom::tests::circle_pad_distance ... ok
+test generate::tests::generated_board_is_deterministic ... ok
+test geom::tests::pad_trace_clearance ... ok
+test generate::tests::netlist_import_places_components ... ok
+test generate::tests::generated_boards_are_well_formed ... ok
+test router::tests::grid_router_connects_two_pads ... ok
+test router::tests::generated_board_routes_clean ... ok
+test router::tests::twenty_generated_boards_route_clean ... ok
+
+test result: ok. 16 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.80s
+
+     Running tests/board_contract.rs (target/llvm-cov-target/debug/deps/board_contract-d6f6c38a978142fa)
+
+running 6 tests
+test trace_and_via_validation ... ok
+test nets_dedupe_and_size ... ok
+test moving_a_footprint_moves_pads ... ok
+test structure_validation_catches_bad_rules_and_outline ... ok
+test refdes_generation_skips_used_names ... ok
+test footprint_errors_are_reported ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/connect_contract.rs (target/llvm-cov-target/debug/deps/connect_contract-a5e6fc9205647221)
+
+running 5 tests
+test direct_trace_connects_and_clears_ratsnest ... ok
+test pad_groups_track_same_footprint_shorts ... ok
+test different_nets_do_not_connect ... ok
+test via_connects_top_and_bottom ... ok
+test ratsnest_minimum_spanning_tree ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/drc_contract.rs (target/llvm-cov-target/debug/deps/drc_contract-2b4e9657143e91cc)
+
+running 8 tests
+test same_net_overlap_is_not_a_short ... ok
+test width_and_drill_rules ... ok
+test different_layers_do_not_conflict ... ok
+test different_net_crossing_is_a_short ... ok
+test board_edge_and_outside_checks ... ok
+test unrouted_and_connectivity_helper ... ok
+test drill_and_annular_checks ... ok
+test report_order_is_stable ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/drc_geometry.rs (target/llvm-cov-target/debug/deps/drc_geometry-c987c86d822eb138)
+
+running 5 tests
+test via_edge_clearance ... ok
+test via_annular_rule ... ok
+test exact_threshold_is_clear_but_one_nanometre_closer_is_not ... ok
+test pad_on_bottom_only_ignores_top_trace ... ok
+test through_pad_clearance_on_bottom_layer ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/generate_contract.rs (target/llvm-cov-target/debug/deps/generate_contract-53fc87262a068aa0)
+
+running 5 tests
+test empty_schematic_is_rejected ... ok
+test invalid_rules_are_rejected ... ok
+test netlist_import_skips_power_symbols ... ok
+test generation_is_deterministic_per_seed ... ok
+test generated_boards_have_connective_nets ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/geom_contract.rs (target/llvm-cov-target/debug/deps/geom_contract-b2b5dde62159c250)
+
+running 5 tests
+test trace_trace_distance ... ok
+test pad_and_via_clearances ... ok
+test layer_sets ... ok
+test polygon_containment_and_distance ... ok
+test pad_shapes_contain_points ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/router_contract.rs (target/llvm-cov-target/debug/deps/router_contract-00d55d5ede93a065)
+
+running 6 tests
+test option_validation ... ok
+test for_board_raises_grid_and_width ... ok
+test tiny_board_returns_a_board_error_not_a_panic ... ok
+test route_all_with_no_connections_is_clean ... ok
+test route_one_connects_two_pads ... ok
+test four_layer_board_uses_top_and_bottom ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/llvm-cov-target/debug/deps/anvil_studio-dd7cecfdcaf22ae4)
+
+running 19 tests
+test http::tests::query_parsing ... ok
+test http::tests::rejects_bad_paths ... ok
+test http::tests::response_json_is_valid ... ok
+test json::tests::depth_is_limited ... ok
+test json::tests::parses_common_values ... ok
+test json::tests::rejects_bad_input ... ok
+test assets::tests::assets_are_embedded_and_offline ... ok
+test json::tests::round_trip ... ok
+test json::tests::unicode ... ok
+test project::tests::demo_compiles_to_simulation ... ok
+test api::tests::initial_state_has_demo_board ... ok
+test project::tests::project_json_round_trip ... ok
+test server::tests::token_generation_and_compare ... ok
+test api::tests::board_json_has_geometry ... ok
+test project::tests::demo_is_valid ... ok
+test api::tests::demo_board_routes_clean ... ok
+test project::tests::examples_are_valid ... ok
+test server::tests::server_starts_and_serves_health ... ok
+test server::tests::api_requires_token ... ok
+
+test result: ok. 19 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+     Running tests/api_contract.rs (target/llvm-cov-target/debug/deps/api_contract-a91aa713c63ba6e4)
+
+running 5 tests
+test project_endpoints_and_errors ... ok
+test state_and_library_endpoints ... ok
+test schematic_edit_round_trip ... ok
+test simulation_endpoint ... ok
+test board_drc_route_and_export_endpoints ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+     Running tests/http_contract.rs (target/llvm-cov-target/debug/deps/http_contract-10a971d25ba5b754)
+
+running 5 tests
+test response_status_and_headers ... ok
+test post_with_body ... ok
+test get_with_query ... ok
+test sse_headers_are_streaming ... ok
+test malformed_requests_error_before_hanging ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/json_contract.rs (target/llvm-cov-target/debug/deps/json_contract-6e1b8f47277555fc)
+
+running 7 tests
+test error_positions_are_present ... ok
+test escaping_round_trips ... ok
+test unicode_surrogates ... ok
+test numbers_serialize_compactly ... ok
+test invalid_inputs_are_rejected ... ok
+test values_and_accessors ... ok
+test depth_and_duplicate_limits ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/project_contract.rs (target/llvm-cov-target/debug/deps/project_contract-71f28e30bacab4a5)
+
+running 5 tests
+test invalid_projects_are_rejected ... ok
+test missing_optional_fields_get_defaults ... ok
+test json_includes_sheet_parts_and_properties ... ok
+test demo_has_expected_nets ... ok
+test all_examples_round_trip ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/route_job.rs (target/llvm-cov-target/debug/deps/route_job-6bdcdf3605d8cf96)
+
+running 3 tests
+test starting_twice_conflicts ... ok
+test background_route_finishes_and_publishes_a_report ... ok
+test rerouting_after_completion_is_possible ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+     Running tests/server_contract.rs (target/llvm-cov-target/debug/deps/server_contract-3c938892098bccf5)
+
+running 3 tests
+test responses_advertise_no_store_and_nosniff ... ok
+test api_accepts_header_or_query_token ... ok
+test assets_are_public_and_offline ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.15s
+
+Filename                                    Regions    Missed Regions     Cover   Functions  Missed Functions  Executed       Lines      Missed Lines     Cover    Branches   Missed Branches     Cover
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+bench/src/main.rs                               227               227     0.00%          15                15     0.00%         119               119     0.00%           0                 0         -
+crates/anvil-core/src/geom.rs                   533                63    88.18%          37                 6    83.78%         264                29    89.02%           0                 0         -
+crates/anvil-core/src/lib.rs                      3                 0   100.00%           1                 0   100.00%           3                 0   100.00%           0                 0         -
+crates/anvil-core/src/library.rs               1191                56    95.30%          52                 8    84.62%         680                42    93.82%           0                 0         -
+crates/anvil-core/src/netlist.rs               1090                49    95.50%          51                 6    88.24%         546                37    93.22%           0                 0         -
+crates/anvil-core/src/schematic/edit.rs         537               113    78.96%          42                 7    83.33%         364                65    82.14%           0                 0         -
+crates/anvil-core/src/schematic/mod.rs          425               123    71.06%          52                14    73.08%         346               128    63.01%           0                 0         -
+crates/anvil-core/src/sim/compile.rs            712               168    76.40%          28                13    53.57%         327                68    79.20%           0                 0         -
+crates/anvil-core/src/sim/lu.rs                 207                 9    95.65%          10                 1    90.00%         113                 9    92.04%           0                 0         -
+crates/anvil-core/src/sim/mod.rs               2084               278    86.66%          88                 8    90.91%        1198               154    87.15%           0                 0         -
+crates/anvil-core/src/util.rs                   237                 8    96.62%          14                 0   100.00%         141                 4    97.16%           0                 0         -
+crates/anvil-export/src/drill.rs                522                60    88.51%          24                 3    87.50%         310                52    83.23%           0                 0         -
+crates/anvil-export/src/gerber.rs              1017               114    88.79%          46                 6    86.96%         603                90    85.07%           0                 0         -
+crates/anvil-export/src/lib.rs                  423                82    80.61%          37                12    67.57%         219                42    80.82%           0                 0         -
+crates/anvil-export/src/png.rs                  246                 3    98.78%           9                 0   100.00%         119                 2    98.32%           0                 0         -
+crates/anvil-export/src/raster.rs               611                53    91.33%          26                 1    96.15%         302                24    92.05%           0                 0         -
+crates/anvil-pcb/src/board.rs                   702               137    80.48%          57                11    80.70%         462                95    79.44%           0                 0         -
+crates/anvil-pcb/src/connect.rs                 666                41    93.84%          26                 3    88.46%         310                21    93.23%           0                 0         -
+crates/anvil-pcb/src/drc.rs                    1034               129    87.52%          49                 6    87.76%         579                86    85.15%           0                 0         -
+crates/anvil-pcb/src/generate.rs                419                17    95.94%          14                 4    71.43%         192                 8    95.83%           0                 0         -
+crates/anvil-pcb/src/geom.rs                    323                27    91.64%          23                 2    91.30%         182                12    93.41%           0                 0         -
+crates/anvil-pcb/src/router.rs                 1535               127    91.73%          61                 8    86.89%         792                74    90.66%           0                 0         -
+crates/anvil-studio/src/api.rs                 3185               409    87.16%         144                42    70.83%        1437               172    88.03%           0                 0         -
+crates/anvil-studio/src/assets.rs                25                 0   100.00%           1                 0   100.00%          12                 0   100.00%           0                 0         -
+crates/anvil-studio/src/http.rs                 559                77    86.23%          47                12    74.47%         332                55    83.43%           0                 0         -
+crates/anvil-studio/src/json.rs                 728                74    89.84%          50                 8    84.00%         427                35    91.80%           0                 0         -
+crates/anvil-studio/src/project.rs             3075               594    80.68%         183               113    38.25%        1216               182    85.03%           0                 0         -
+crates/anvil-studio/src/server.rs               404                56    86.14%          21                 6    71.43%         256                46    82.03%           0                 0         -
+fuzz/src/main.rs                                222               222     0.00%           6                 6     0.00%         109               109     0.00%           0                 0         -
+src/main.rs                                     229               115    49.78%          16                10    37.50%         126                66    47.62%           0                 0         -
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+TOTAL                                         23171              3431    85.19%        1230               331    73.09%       12086              1826    84.89%           0                 0         -
