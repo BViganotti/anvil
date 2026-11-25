@@ -15,6 +15,16 @@ them through the **Examples…** selector; the headless API can load them with
 | `rlc-ringing.json` | RLC ringing | inductor/capacitor transient |
 | `logic-gates.json` | Logic gates | pulse-driven AND and NOT with delays |
 | `full-wave-rectifier.json` | Full-wave rectifier | four-diode bridge and filter capacitor |
+| `resistor-ladder.json` | Resistor ladder | three-stage attenuator taps |
+| `current-bias.json` | Current bias | current source into parallel resistors |
+| `parallel-rc.json` | Parallel RC | two-resistor charging network |
+| `diode-clamp.json` | Diode clamp | diode limiting a sine to a 3 V rail |
+| `half-adder.json` | Half adder | XOR sum and AND carry from pulse inputs |
+| `dff-divider.json` | DFF divider | flip-flop with QN feedback divides by two |
+| `led-series.json` | LED series | two diodes and a shared resistor |
+| `inductor-filter.json` | Inductor filter | RLC low-pass response |
+| `rc-differentiator.json` | RC differentiator | capacitive edge response |
+| `diode-peak-detector.json` | Diode peak detector | diode and capacitor hold the peak |
 
 Regenerate the files after changing the project builders:
 
