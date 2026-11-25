@@ -33,6 +33,7 @@ edition.workspace = true
 license.workspace = true
 authors.workspace = true
 description = "Anvil — a local browser EDA workbench (schematic, simulation, PCB, DRC, autoroute, Gerber)"
+default-run = "anvil"
 
 [[bin]]
 name = "anvil"
