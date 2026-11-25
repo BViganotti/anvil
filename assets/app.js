@@ -931,6 +931,7 @@ async function runSimulation() {
       : `Transient ${res.method} · ${res.steps} steps · ${res.samples} plotted samples${res.truncated ? ' · truncated' : ''}`;
     $('sim-status').textContent = info;
     $('sim-headline').textContent = info;
+    $('export-csv').disabled = false;
     const errs = (res.diagnostics || []).filter((d) => d.severity === 'error').length;
     if (errs) notify(`${errs} netlist errors`, true);
   } catch (e) {
@@ -978,6 +979,35 @@ function startRouteSSE() {
     S.routeES = null;
     setStatus('route-status', 'route stream lost', 'warn');
   };
+}
+
+function downloadBlob(name, text, mime) {
+  const blob = new Blob([text], { type: mime || 'text/plain' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = name;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+}
+
+function exportSimulationCsv() {
+  const p = S.plot;
+  if (!p) return notify('Run a simulation first', true);
+  let csv = '';
+  if (p.mode === 'dc') {
+    csv = 'node,voltage_V\n' + (p.nodes || []).map((n) => `${n.name},${n.voltage}`).join('\n') + '\n';
+  } else {
+    const series = (p.series || []).filter((_, i) => !S.hiddenSeries.has(i));
+    const header = ['time_ms', ...series.map((s) => s.name)];
+    csv = header.join(',') + '\n';
+    (p.time_ms || []).forEach((t, i) => {
+      csv += t + ',' + series.map((s) => s.values[i]).join(',') + '\n';
+    });
+  }
+  downloadBlob('anvil-simulation.csv', csv, 'text/csv');
+  notify('simulation CSV downloaded');
 }
 
 async function autoroute() {
@@ -1118,6 +1148,7 @@ function bindUI() {
   $('zoom-out').addEventListener('click', () => { S.sch.scale /= 1.3; drawSchematic(); });
   $('zoom-fit').addEventListener('click', () => { fitView('sch'); drawSchematic(); });
   $('simulate-run').addEventListener('click', runSimulation);
+  $('export-csv').addEventListener('click', exportSimulationCsv);
   $('generate-board').addEventListener('click', async () => {
     try {
       const st = await apiJson('/api/board/generate', {});
