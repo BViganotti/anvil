@@ -13,3 +13,4 @@ path = "src/main.rs"
 anvil-core = { path = "../crates/anvil-core" }
 anvil-pcb = { path = "../crates/anvil-pcb" }
 anvil-export = { path = "../crates/anvil-export" }
+anvil-studio = { path = "../crates/anvil-studio" }
