@@ -343,7 +343,8 @@ pub fn render_with_holes(
 
 /// Choose a scale that roughly fills `target_width` pixels.
 pub fn fit_to_width(doc: &GerberDoc, target_width: u32) -> Option<RasterOptions> {
-    let b = prim_bounds(doc)?;
+    // Match `render`, which expands the primitive bounds by 0.1 mm.
+    let b = prim_bounds(doc)?.expand(100_000);
     if b.width() <= 0 {
         return None;
     }
