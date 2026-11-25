@@ -19,6 +19,7 @@ dependencies = [
  "anvil-core",
  "anvil-export",
  "anvil-pcb",
+ "anvil-studio",
 ]
 
 [[package]]
@@ -40,6 +41,7 @@ dependencies = [
  "anvil-core",
  "anvil-export",
  "anvil-pcb",
+ "anvil-studio",
 ]
 
 [[package]]

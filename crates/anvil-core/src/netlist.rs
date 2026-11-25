@@ -692,7 +692,6 @@ mod tests {
         let r1 = s.add_component(&lib, "R", Point::new(0, 0)).unwrap();
         let r2 = s.add_component(&lib, "R", Point::new(0, 5_080_000)).unwrap();
         // R pins are at ±2.54mm horizontally.
-        let r1_hi = s.component(r1).unwrap().pins[1].pos;
         let r1_lo = s.component(r1).unwrap().pins[0].pos;
         let r2_hi = s.component(r2).unwrap().pins[0].pos;
         let r2_lo = s.component(r2).unwrap().pins[1].pos;

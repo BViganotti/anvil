@@ -1,5 +1,15 @@
 [workspace]
 members = [
+    ".",
+    "crates/anvil-core",
+    "crates/anvil-pcb",
+    "crates/anvil-export",
+    "crates/anvil-studio",
+    "bench",
+    "fuzz",
+]
+default-members = [
+    ".",
     "crates/anvil-core",
     "crates/anvil-pcb",
     "crates/anvil-export",
