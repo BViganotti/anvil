@@ -8,7 +8,7 @@ use anvil_studio::project::Project;
 fn all_examples_round_trip() {
     let lib = Library::standard();
     let projects = Project::examples(&lib).unwrap();
-    assert!(projects.len() >= 19);
+    assert!(projects.len() >= 24);
     for p in projects {
         let j = p.to_json();
         let text = j.to_json();

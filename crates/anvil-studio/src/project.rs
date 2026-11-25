@@ -341,6 +341,11 @@ impl Project {
         out.push(inductor_filter(lib)?);
         out.push(differentiator(lib)?);
         out.push(clamp_cap(lib)?);
+        out.push(rl_step(lib)?);
+        out.push(switch_divider(lib)?);
+        out.push(superposition3(lib)?);
+        out.push(rc_decay(lib)?);
+        out.push(parallel_inductors(lib)?);
         Ok(out)
     }
 }
@@ -974,6 +979,151 @@ fn clamp_cap(lib: &Library) -> Result<Project, String> {
             ("C1", "2", "GND"),
             ("R1", "1", "PEAK"),
             ("R1", "2", "GND"),
+        ],
+    )?;
+    Ok(p)
+}
+
+
+fn rl_step(lib: &Library) -> Result<Project, String> {
+    let mut p = Project::new("RL step");
+    p.schematic.sheet.title = "Series RL step response".to_string();
+    add(&mut p, lib, "V", "V1", 15.0, 30.0)?;
+    add(&mut p, lib, "R", "R1", 32.0, 35.0)?;
+    add(&mut p, lib, "L", "L1", 48.0, 30.0)?;
+    let v = comp_id(&p, "V1").unwrap();
+    p.schematic.set_property(v, "wave", "pulse").map_err(|e| e.to_string())?;
+    for (k, val) in [("v1", "0"), ("v2", "5"), ("rise", "10n"), ("width", "2m"), ("period", "4m")] {
+        p.schematic.set_property(v, k, val).map_err(|e| e.to_string())?;
+    }
+    p.schematic.set_value(comp_id(&p, "R1").unwrap(), "100").map_err(|e| e.to_string())?;
+    p.schematic.set_value(comp_id(&p, "L1").unwrap(), "1m").map_err(|e| e.to_string())?;
+    label_pins(
+        &mut p,
+        &[
+            ("V1", "+", "IN"),
+            ("V1", "-", "GND"),
+            ("R1", "1", "IN"),
+            ("R1", "2", "N1"),
+            ("L1", "1", "N1"),
+            ("L1", "2", "GND"),
+        ],
+    )?;
+    Ok(p)
+}
+
+fn switch_divider(lib: &Library) -> Result<Project, String> {
+    let mut p = Project::new("Switch divider");
+    p.schematic.sheet.title = "Switched divider".to_string();
+    add(&mut p, lib, "V", "V1", 15.0, 30.0)?;
+    add(&mut p, lib, "R", "R1", 32.0, 35.0)?;
+    add(&mut p, lib, "R", "R2", 32.0, 25.0)?;
+    add(&mut p, lib, "SW", "SW1", 50.0, 29.0)?;
+    p.schematic.set_value(comp_id(&p, "V1").unwrap(), "5").map_err(|e| e.to_string())?;
+    p.schematic.set_value(comp_id(&p, "R1").unwrap(), "1k").map_err(|e| e.to_string())?;
+    p.schematic.set_value(comp_id(&p, "R2").unwrap(), "2k").map_err(|e| e.to_string())?;
+    label_pins(
+        &mut p,
+        &[
+            ("V1", "+", "IN"),
+            ("V1", "-", "GND"),
+            ("R1", "1", "IN"),
+            ("R1", "2", "OUT"),
+            ("R2", "1", "OUT"),
+            ("R2", "2", "OUT2"),
+            ("SW1", "1", "OUT2"),
+            ("SW1", "2", "GND"),
+        ],
+    )?;
+    Ok(p)
+}
+
+fn superposition3(lib: &Library) -> Result<Project, String> {
+    let mut p = Project::new("Three-source superposition");
+    p.schematic.sheet.title = "Three-source node".to_string();
+    add(&mut p, lib, "V", "V1", 15.0, 40.0)?;
+    add(&mut p, lib, "V", "V2", 15.0, 28.0)?;
+    add(&mut p, lib, "V", "V3", 15.0, 16.0)?;
+    add(&mut p, lib, "R", "R1", 32.0, 42.0)?;
+    add(&mut p, lib, "R", "R2", 32.0, 30.0)?;
+    add(&mut p, lib, "R", "R3", 32.0, 18.0)?;
+    add(&mut p, lib, "R", "R4", 52.0, 30.0)?;
+    for (r, v) in [("V1", "2"), ("V2", "4"), ("V3", "6")] {
+        p.schematic.set_value(comp_id(&p, r).unwrap(), v).map_err(|e| e.to_string())?;
+    }
+    for (r, v) in [("R1", "1k"), ("R2", "2k"), ("R3", "3k"), ("R4", "1k")] {
+        p.schematic.set_value(comp_id(&p, r).unwrap(), v).map_err(|e| e.to_string())?;
+    }
+    label_pins(
+        &mut p,
+        &[
+            ("V1", "+", "A"),
+            ("V1", "-", "GND"),
+            ("V2", "+", "B"),
+            ("V2", "-", "GND"),
+            ("V3", "+", "C"),
+            ("V3", "-", "GND"),
+            ("R1", "1", "A"),
+            ("R1", "2", "OUT"),
+            ("R2", "1", "B"),
+            ("R2", "2", "OUT"),
+            ("R3", "1", "C"),
+            ("R3", "2", "OUT"),
+            ("R4", "1", "OUT"),
+            ("R4", "2", "GND"),
+        ],
+    )?;
+    Ok(p)
+}
+
+fn rc_decay(lib: &Library) -> Result<Project, String> {
+    let mut p = Project::new("RC decay");
+    p.schematic.sheet.title = "Capacitor initial condition".to_string();
+    add(&mut p, lib, "C", "C1", 30.0, 34.0)?;
+    add(&mut p, lib, "R", "R1", 45.0, 28.0)?;
+    p.schematic
+        .set_property(comp_id(&p, "C1").unwrap(), "ic", "5")
+        .map_err(|e| e.to_string())?;
+    p.schematic.set_value(comp_id(&p, "C1").unwrap(), "1u").map_err(|e| e.to_string())?;
+    p.schematic.set_value(comp_id(&p, "R1").unwrap(), "1k").map_err(|e| e.to_string())?;
+    label_pins(
+        &mut p,
+        &[
+            ("C1", "1", "OUT"),
+            ("C1", "2", "GND"),
+            ("R1", "1", "OUT"),
+            ("R1", "2", "GND"),
+        ],
+    )?;
+    Ok(p)
+}
+
+fn parallel_inductors(lib: &Library) -> Result<Project, String> {
+    let mut p = Project::new("Parallel inductors");
+    p.schematic.sheet.title = "Parallel inductor load".to_string();
+    add(&mut p, lib, "V", "V1", 15.0, 30.0)?;
+    add(&mut p, lib, "R", "R1", 32.0, 35.0)?;
+    add(&mut p, lib, "L", "L1", 49.0, 31.0)?;
+    add(&mut p, lib, "L", "L2", 49.0, 23.0)?;
+    let v = comp_id(&p, "V1").unwrap();
+    p.schematic.set_property(v, "wave", "pulse").map_err(|e| e.to_string())?;
+    for (k, val) in [("v1", "0"), ("v2", "5"), ("rise", "100n"), ("width", "2m"), ("period", "4m")] {
+        p.schematic.set_property(v, k, val).map_err(|e| e.to_string())?;
+    }
+    p.schematic.set_value(comp_id(&p, "R1").unwrap(), "50").map_err(|e| e.to_string())?;
+    p.schematic.set_value(comp_id(&p, "L1").unwrap(), "2m").map_err(|e| e.to_string())?;
+    p.schematic.set_value(comp_id(&p, "L2").unwrap(), "4m").map_err(|e| e.to_string())?;
+    label_pins(
+        &mut p,
+        &[
+            ("V1", "+", "IN"),
+            ("V1", "-", "GND"),
+            ("R1", "1", "IN"),
+            ("R1", "2", "N1"),
+            ("L1", "1", "N1"),
+            ("L1", "2", "GND"),
+            ("L2", "1", "N1"),
+            ("L2", "2", "GND"),
         ],
     )?;
     Ok(p)

@@ -12,7 +12,7 @@ fn example_files_match_the_builders() {
     let lib = Library::standard();
     let dir = Path::new(env!("CARGO_MANIFEST_DIR")).join("examples");
     let built = Project::examples(&lib).unwrap();
-    assert!(built.len() >= 19);
+    assert!(built.len() >= 24);
     for p in built {
         let slug = p
             .name
@@ -47,7 +47,7 @@ fn examples_directory_has_only_expected_projects() {
             json_files += 1;
         }
     }
-    assert!(json_files >= 19);
+    assert!(json_files >= 24);
 }
 
 #[test]
