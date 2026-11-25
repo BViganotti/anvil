@@ -443,12 +443,36 @@ function renderState() {
   $('project-name').textContent = S.state.name;
   $('sheet-title').textContent = S.state.sheet ? S.state.sheet.title : '';
   renderNetlist();
+  populateExamples();
   renderDrcSummary();
   renderRouteStatus();
   setStatus('drc-status',
     S.state.drc ? (S.state.drc.clean ? 'DRC clean' : `DRC ${S.state.drc.errors}`) : 'DRC —',
     S.state.drc ? (S.state.drc.clean ? 'ok' : 'bad') : '');
   if (S.state.board && !S.state.board.present) setStatus('route-status', 'no board', 'warn');
+}
+
+function populateExamples() {
+  const sel = $('example-select');
+  if (!sel || !S.state || !S.state.examples) return;
+  if (sel.options.length > 1) return;
+  for (const name of S.state.examples) {
+    const opt = document.createElement('option');
+    opt.value = name;
+    opt.textContent = name;
+    sel.appendChild(opt);
+  }
+}
+
+async function loadExample(name) {
+  if (!name) return;
+  try {
+    const st = await apiJson('/api/project/load', { name });
+    S.board = null; S.sel = null; S.sch.fitted = false; S.bd.fitted = false;
+    applyState(st);
+    await loadBoard();
+    notify('loaded ' + name);
+  } catch (e) { notify(e.message, true); }
 }
 
 function renderNetlist() {
@@ -1027,6 +1051,9 @@ function bindUI() {
       await loadBoard();
       notify('demo loaded');
     } catch (e) { notify(e.message, true); }
+  });
+  $('example-select').addEventListener('change', (e) => {
+    loadExample(e.target.value).finally(() => { e.target.value = ''; });
   });
   $('new-project').addEventListener('click', async () => {
     try {
