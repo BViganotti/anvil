@@ -306,8 +306,15 @@ impl<'a> Parser<'a> {
             self.pos += 1;
         }
         let int_start = self.pos;
-        while matches!(self.peek(), Some(b'0'..=b'9')) {
+        if self.peek() == Some(b'0') {
             self.pos += 1;
+            if matches!(self.peek(), Some(b'0'..=b'9')) {
+                return Err(JsonError::new(start, "leading zero"));
+            }
+        } else {
+            while matches!(self.peek(), Some(b'0'..=b'9')) {
+                self.pos += 1;
+            }
         }
         if self.pos == int_start {
             return Err(JsonError::new(start, "bad number"));
