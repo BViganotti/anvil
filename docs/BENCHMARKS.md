@@ -9,14 +9,14 @@ milliseconds per iteration and iterations per second. Nothing is estimated.
 
 | Operation | Time | Throughput |
 |---|---:|---:|
-| Netlist extraction, demo schematic | 0.026 ms | 39,133 /s |
-| DC operating point, demo circuit | 0.002 ms | 515,625 /s |
-| Transient, 2,000 steps, demo | 1.712 ms | 584 /s |
-| Transient, 1,000 steps, 20-node RC ladder | 4.342 ms | 230 /s |
-| DRC, routed 10-net generated board | 0.273 ms | 3,664 /s |
-| Gerber write, top copper | 0.030 ms | 33,252 /s |
-| Gerber parse, top copper | 0.010 ms | 99,148 /s |
-| Gerber raster, 10 px/mm | 0.115 ms | 8,658 /s |
+| Netlist extraction, demo schematic | 0.021 ms | 48,188 /s |
+| DC operating point, demo circuit | 0.002 ms | 564,938 /s |
+| Transient, 2,000 steps, demo | 1.409 ms | 710 /s |
+| Transient, 1,000 steps, 20-node RC ladder | 4.007 ms | 250 /s |
+| DRC, routed 10-net generated board | 0.255 ms | 3,914 /s |
+| Gerber write, top copper | 0.027 ms | 36,496 /s |
+| Gerber parse, top copper | 0.010 ms | 102,505 /s |
+| Gerber raster, 10 px/mm | 0.112 ms | 8,967 /s |
 
 ## Autoroute
 
@@ -24,11 +24,11 @@ Generated 10-net boards, full route with DRC verification:
 
 | Seed | Time | Nets | Traces | Vias | Clean |
 |---:|---:|---:|---:|---:|:---:|
-| 1 | 3.621 ms | 10 | 16 | 6 | yes |
-| 2 | 2.789 ms | 10 | 16 | 6 | yes |
-| 3 | 2.875 ms | 10 | 14 | 4 | yes |
-| 4 | 4.252 ms | 10 | 22 | 12 | yes |
-| 5 | 3.000 ms | 10 | 14 | 4 | yes |
+| 1 | 3.750 ms | 10 | 16 | 6 | yes |
+| 2 | 2.289 ms | 10 | 16 | 6 | yes |
+| 3 | 2.737 ms | 10 | 14 | 4 | yes |
+| 4 | 4.286 ms | 10 | 22 | 12 | yes |
+| 5 | 2.803 ms | 10 | 14 | 4 | yes |
 
 ## Reading the numbers
 

@@ -68,7 +68,7 @@ cargo run --release -- generate-examples
 
 | Suite | What it proves |
 |---|---|
-| `cargo test` | 100+ unit and integration tests across all crates |
+| `cargo test` | 263 unit and integration test cases across all crates |
 | 500 reference netlists | linear MNA matches an independent solver |
 | 40 analytic circuits | dividers, Millman, parallel, diodes, RC within 0.1% |
 | 20 generated boards | every net routes with zero DRC errors |
@@ -81,16 +81,16 @@ Measured release benchmarks (single thread, development machine):
 
 | Operation | Time |
 |---|---:|
-| Netlist extraction (demo) | 0.026 ms |
+| Netlist extraction (demo) | 0.021 ms |
 | DC operating point (demo) | 0.002 ms |
-| Transient, 2,000 steps (demo) | 1.71 ms |
-| Transient, 1,000 steps (20-node RC) | 4.34 ms |
+| Transient, 2,000 steps (demo) | 1.41 ms |
+| Transient, 1,000 steps (20-node RC) | 4.01 ms |
 | Autoroute, 10-net board | 2.8–4.3 ms |
-| DRC, routed generated board | 0.273 ms |
-| Gerber write / parse | 0.030 / 0.010 ms |
-| Rasterize at 10 px/mm | 0.115 ms |
+| DRC, routed generated board | 0.255 ms |
+| Gerber write / parse | 0.027 / 0.010 ms |
+| Rasterize at 10 px/mm | 0.112 ms |
 
-Line coverage is about **80%** overall (`cargo llvm-cov --workspace
+Line coverage is **85.2%** overall (`cargo llvm-cov --workspace
 --summary-only`); see `FINAL_REPORT.md`.
 
 ## Documentation
@@ -102,6 +102,10 @@ Line coverage is about **80%** overall (`cargo llvm-cov --workspace
 - [Gerber and drill](docs/GERBER.md)
 - [Studio](docs/STUDIO.md)
 - [Testing](docs/TESTING.md)
+- [Project format](docs/PROJECT_FORMAT.md)
+- [Component library](docs/LIBRARY.md)
+- [Security](docs/SECURITY.md)
+- [Benchmarks](docs/BENCHMARKS.md)
 - [Examples](examples/README.md)
 - [Limitations](LIMITATIONS.md)
 - [Final report](FINAL_REPORT.md)

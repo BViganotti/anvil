@@ -79,7 +79,7 @@ Chromium:
 `fuzz/` runs deterministic malformed-input campaigns over JSON, Gerber, drill,
 project import, schematic edits and netlist extraction. It prints rejected vs
 accepted counts and exits non-zero on any panic. A 2,000-case run reports
-1,718 rejected, 282 accepted, 0 panics.
+1,719 rejected, 281 accepted, 0 panics.
 
 ## Benchmarks
 
@@ -87,15 +87,15 @@ Measured on the development machine, release build, single thread:
 
 | Operation | Time |
 |---|---:|
-| Netlist extraction (demo) | 0.026 ms |
+| Netlist extraction (demo) | 0.021 ms |
 | DC operating point (demo) | 0.002 ms |
-| Transient, 2,000 steps (demo) | 1.71 ms |
-| Transient, 1,000 steps (20-node RC) | 4.34 ms |
-| Autoroute, 10-net generated board | 2.8–4.3 ms |
-| DRC on routed generated board | 0.273 ms |
-| Gerber write, top copper | 0.030 ms |
+| Transient, 2,000 steps (demo) | 1.41 ms |
+| Transient, 1,000 steps (20-node RC) | 4.01 ms |
+| Autoroute, 10-net generated board | 2.3–4.3 ms |
+| DRC on routed generated board | 0.255 ms |
+| Gerber write, top copper | 0.027 ms |
 | Gerber parse, top copper | 0.010 ms |
-| Rasterize at 10 px/mm | 0.115 ms |
+| Rasterize at 10 px/mm | 0.112 ms |
 
 These are ordinary wall-clock measurements; no fabricated speedups.
 

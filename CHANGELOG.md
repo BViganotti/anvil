@@ -29,11 +29,11 @@ follows the milestone plan in `PLAN.md`.
 - Export: Gerber RS-274X writer/parser, Excellon drill writer/parser, Gerber
   rasterizer with drilled-hole punching, and a dependency-free PNG encoder.
 - Studio: loopback HTTP/1.1 server, per-launch token, strict CSP, JSON API,
-  SSE autoroute progress, project model, demo, nine examples, schematic canvas,
+  SSE autoroute progress, project model, demo, 24 examples, schematic canvas,
   simulation plots, board canvas, DRC panel, Gerber preview and downloads.
 - Launcher: random/fixed port, browser auto-open, batch export and example
   generation.
-- Tests: 100+ Rust tests, 500 reference netlists, 40 analytic circuits, 20
+- Tests: 263 Rust test cases, 500 reference netlists, 40 analytic circuits, 20
   zero-DRC boards, deterministic replay, Gerber round trips, 1,000 malformed
   inputs, HTTP/SSE end-to-end, Playwright browser flow.
 - Deterministic fuzz harness and measured standard-library benchmarks.
